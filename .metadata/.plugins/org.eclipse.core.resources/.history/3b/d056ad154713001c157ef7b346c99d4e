@@ -1,0 +1,250 @@
+package application;
+
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Hashtable;
+import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
+
+import DBConnection.DBHandler;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
+public class HomePageController implements Initializable {
+	
+	private Stage stage;
+	private Scene scene;
+	private Parent root;
+	
+	private Connection connection;
+	private DBHandler handler;
+	private Statement stmt;
+	private String sql;
+	private ResultSet rs;
+	private int rsRows;
+	
+	private final int ROW_SIZE = 2; 
+	//Row size is hard-coded because of funky situations that occur with getFetchSize();
+	// -> https://stackoverflow.com/questions/5689863/java-database-resultset-keep-returning-zero-rows
+	// -> https://stackoverflow.com/questions/20899977/what-and-when-should-i-specify-setfetchsize
+	/*
+	private int rsColumns;//Useful for  scaling purposes
+		The number of columns is hard-coded(2). 
+		The number of columns is  static unlike the number of rows. 
+		
+		In the case that it becomes dynamic use rs.getColumnCount()
+		to initialize variable. place in 
+	*/
+	
+	private Node[][] gridPaneArray = null;
+	
+	private AlertConfigs alertConfigs;
+	
+	@FXML
+	private Button signOutButton;
+	
+	@FXML
+	private GridPane gridPane;
+	
+	@FXML
+	private Label statusLabel;
+	
+	
+	
+	
+
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		handler = new DBHandler();
+		alertConfigs = new AlertConfigs();
+		
+		setGridPane();
+		initializeGridPaneArray();
+		
+		
+	}
+	
+	//For testing purposes only
+	private void setDummyGridPane() {
+		int i = 0;
+		while(i < 5) {
+			gridPane.add(new Label(String.valueOf(i)), 0, i); 
+			gridPane.add(new Label("Hello"), 1, i);
+			i++;
+		}
+	}
+	private void printGridPaneArray() {
+		for (int i = 0; i < this.gridPaneArray.length; i++) {
+			for (int j = 0 ; j < 2; j++)
+				System.out.println(gridPaneArray[i][j].toString());
+		}
+	}
+	//-----------------------
+	
+	
+	private void initializeGridPaneArray() {
+		
+	//Number of columns is hard-coded.
+	gridPaneArray = new Node[ROW_SIZE][2];
+	
+	System.out.println("Rows: " + ROW_SIZE);
+	
+	ObservableList<Node> gridpaneNodes = this.gridPane.getChildren();
+	
+	
+       for(Node node : gridpaneNodes)
+       {
+          this.gridPaneArray[GridPane.getRowIndex(node)][GridPane.getColumnIndex(node)] = node;
+       }
+    }
+
+	public void refresh(ActionEvent event) {
+		setDBAverages();
+		
+		changeStatusLabel(" ");
+		try {
+			
+			rs.first();
+			Label node;
+			for(int row = 0; row < ROW_SIZE + 1 ; row++ ) {	 //Cheat 
+				for (int col = 0; col < 2; col++) {
+					node =(Label) gridPaneArray[row][col];
+					node.setText(  "Updated " + rs.getString(col+1) );
+					
+					
+				}
+				System.out.println();
+				rs.next();
+			}
+			
+			changeStatusLabel("Success Refreshing ...");
+			
+		} catch (SQLException e) {
+			handleExceptions(e);
+		}	
+	}
+	
+	
+	public void setGridPane() {
+		
+		if (setDBAverages() == false )	{
+			//Status label has already been changed in setDBAverages()
+			return;
+		}
+			
+		try {
+			String carId, carAvg;
+			//rsRows = rs.getFetchSize();
+			
+			
+			rs.first();
+			//rs.next();
+			
+			for(int row = 0; row <= rsRows + 1; row++) {
+				carId = rs.getString(1);
+				carAvg = rs.getString(2);
+				
+				
+				gridPane.add(new Label(carId), 0, row); 
+				gridPane.add(new Label(carAvg), 1, row);
+				
+				
+				rs.next();
+				changeStatusLabel("Success...");
+			
+			}
+			
+		} catch (SQLException e) {
+			System.out.println(e);
+			this.handleExceptions(e);
+			return;
+		}
+	} 
+		
+	
+	private boolean setDBAverages() {
+		try {
+			
+			
+			connection = handler.getConnection();
+			System.out.println("Connecting to database...");
+			
+			//stmt = connection.createStatement();
+			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
+			 
+			sql = "SELECT  *  FROM carreview.car_rating_avg";
+
+			rs  = stmt.executeQuery(sql);
+			
+			
+			rs.next(); //Move to first row
+					
+					
+				
+			return true;
+			
+		}catch(Exception e) {			
+			System.out.print(e);
+			handleExceptions(e);
+
+		}
+		return false;
+	}
+	
+	private void closeDB()  {
+		try {
+			rs.close();
+			stmt.close();
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error Type" + e.getClass().getName());
+			System.out.println(e);
+		}
+		
+		System.out.println("Connection Closed...");
+	}
+	
+	private void changeStatusLabel(String in) {
+		statusLabel.setText("Status: " + in);
+	}
+	private void handleExceptions(Exception e) {
+		if (e instanceof SQLException) {
+			alertConfigs.connectionError.showAndWait();
+			changeStatusLabel("Unable to connect to Database");
+
+		}
+		else {
+			alertConfigs.showUnknownError();
+			changeStatusLabel("An error has occured");
+			
+		}
+	}
+	
+	public void signOut(ActionEvent event){
+		try{
+			root = FXMLLoader.load(getClass().getResource("/fxml/LogIn.fxml"));
+	 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			scene = new Scene(root);
+			stage.setScene(scene);
+			stage.show();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+}
+

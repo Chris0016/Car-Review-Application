@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="casesensitive" value="true"/>
+		<item key="wholeword" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<item key="selection" value="printAc"/>
+		<list key="findhistory">
+			<item value="Id"/>
+			<item value="connecting"/>
+			<item value="todo"/>
+			<item value="rows"/>
+			<item value="rsRows"/>
+			<item value="close"/>
+			<item value="getDBAverages()"/>
+			<item value="connection"/>
+		</list>
+		<list key="replacehistory">
+			<item value="id"/>
+			<item value="ROW_SIZE"/>
+			<item value="setDBAverages()"/>
+			<item value="stmt"/>
+			<item value="rsRows"/>
+			<item value="@FXML"/>
+			<item value="private"/>
+		</list>
+	</section>
+</section>

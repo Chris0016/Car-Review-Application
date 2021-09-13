@@ -1,0 +1,110 @@
+package application;
+
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+
+public class SignUpController {
+	private Parent root;
+	private Stage stage;
+	private Scene scene;
+
+	@FXML
+	private TextField nameTextField;
+
+	@FXML
+	private TextField lastNameTextField;
+
+	@FXML
+	private TextField password1TextField;
+
+	@FXML 
+	private TextField password2TextField;
+
+	@FXML
+	private TextField ageTextField;
+
+	@FXML
+	private TextField favCarTextField;
+
+	private Alert underAgeAlert = alert("Invalid Age", "Invalid Age: Must Be Over 18" , "You must be over 18 to sign up for this App",AlertType.WARNING);
+	private Alert notANumberAlert = alert("Invalid Age", "Invalid Age: Not A Number", "You must input a number (> 18 )", AlertType.WARNING);
+	
+	private String name;
+	private String lastName;
+	private String age;
+	private String favCar;
+	private String password1;
+	private String password2;
+
+
+	private void loadVariables(){
+	 name = nameTextField.getText();
+	 lastName = lastNameTextField.getText();
+	 age = ageTextField.getText();
+	 ageNum = 0;
+	 favCar = favCarTextField.getText();
+	 password1 = password1TextField.getText();
+	 password2 = password2TextField.getText();
+
+	}
+
+	public void returnToLogin(ActionEvent event){
+		try{
+		root = FXMLLoader.load(getClass().getResource("LogIn.fxml"));
+ 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(root);
+		stage.setScene(scene);
+		stage.show();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void signUp(){
+		loadVariables();
+		if (passwordMatches() && hasValidAge() ) createUser();
+	}
+	
+	private void createUser(){
+		System.out.println("Has a valid age and password matches.");
+
+	}
+
+	private boolean passwordMatches(){
+		return password1.equals(password2);
+	}
+	
+	private boolean hasValidAge(){
+		try {
+			ageNum = Integer.parseInt(age);
+			if(ageNum > 17 && ageNum < 110){
+				underAgeAlert.showAndWait();
+				return false;
+			}
+		}
+		catch(Exception e){
+			notANumberAlert.showAndWait();
+			return false;
+		}
+		return true;
+	}
+
+	private Alert alert(String title, String headerText,  String contentText, Alert.AlertType alertType){
+		Alert genericAlert = new Alert(alertType);
+		genericAlert.setTitle(title);
+		genericAlert.setHeaderText(headerText);
+		genericAlert.setContentText(contentText);
+
+		return genericAlert;
+
+	}
+
+
+}

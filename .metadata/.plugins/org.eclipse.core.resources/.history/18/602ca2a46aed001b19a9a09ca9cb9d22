@@ -1,0 +1,134 @@
+package application;
+
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.FXML;
+
+import java.util.Map;
+import java.util.Hashtable;
+
+public class SignUpController {
+	private Parent root;
+	private Stage stage;
+	private Scene scene;
+
+	@FXML
+	 TextField nameTextField;
+
+	@FXML
+	TextField lastNameTextField;
+
+	@FXML
+	TextField password1TextField;
+
+	@FXML 
+	TextField password2TextField;
+
+	@FXML
+	TextField ageTextField;
+
+	@FXML
+	TextField favCarTextField;
+	
+
+	private Alert underAgeAlert = alert("Invalid Age", "Invalid Age: Must Be Over 18" , "You must be over 18 to sign up for this App",AlertType.WARNING);
+	private Alert notANumberAlert = alert("Invalid Age", "Invalid Age: Not A Number", "You must input a number (> 18 )", AlertType.WARNING);
+	private Alert incompleteForm = alert("Form Not Complete", "Please Complete all the Blanks", "To proceed all blanks must be filled", AlertType.WARNING);
+	
+	private String name;
+	
+	
+	private Hashtable<String, String> form = new Hashtable<String, String>(6);
+	private int ageNum;
+
+
+
+	private void loadVariables() {
+
+		form.put("name", nameTextField.getText());
+		form.put("last name", lastNameTextField.getText());
+		form.put("age", ageTextField.getText());
+		form.put("fav car", favCarTextField.getText() );
+		form.put("password1", password1TextField.getText());
+		form.put("password2", password2TextField.getText());
+
+		
+	}
+	private void printValues(){
+		for(Map.entry<String, String> e :  form.entrySet()){
+			System.out.println(e.getKey() + ": " + e.getValue());
+		}
+	}
+	private void notEmpty() throws NullPointerException{
+
+	}
+	public void returnToLogin(ActionEvent event){
+		try{
+		root = FXMLLoader.load(getClass().getResource("LogIn.fxml"));
+ 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(root);
+		stage.setScene(scene);
+		stage.show();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void signUp(){
+		
+		try {
+			loadVariables();
+			printValues();
+			return;
+			
+		}catch(Exception e) {
+			incompleteForm.showAndWait();
+			System.out.println(e);
+			return;
+		}
+		//if (passwordMatches() && hasValidAge() ) createUser();
+	}
+	
+	private void createUser(){
+		System.out.println("Has a valid age and password matches.");
+
+	}
+
+	private boolean passwordMatches(){
+		return form.get("password1").equals(form.get("password2"));
+	}
+	
+	private boolean hasValidAge(){
+		try {
+			ageNum = Integer.parseInt(form.get("age"));
+			if(ageNum > 17 && ageNum < 110){
+				underAgeAlert.showAndWait();
+				return false;
+			}
+		}
+		catch(Exception e){
+			notANumberAlert.showAndWait();
+			return false;
+		}
+		return true;
+	}
+
+	private Alert alert(String title, String headerText,  String contentText, Alert.AlertType alertType){
+		Alert genericAlert = new Alert(alertType);
+		genericAlert.setTitle(title);
+		genericAlert.setHeaderText(headerText);
+		genericAlert.setContentText(contentText);
+
+		return genericAlert;
+
+	}
+
+
+}
