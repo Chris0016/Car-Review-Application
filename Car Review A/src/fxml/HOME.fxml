@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -7,10 +8,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="294.0" prefWidth="455.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.HomeController">
    <children>
-      <GridPane layoutX="65.0" layoutY="65.0" prefHeight="32.0" prefWidth="493.0">
+      <GridPane layoutX="54.0" layoutY="25.0" prefHeight="32.0" prefWidth="326.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -20,41 +20,32 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Car Model">
+            <Label prefHeight="39.0" prefWidth="111.0" text="Car Model">
                <font>
-                  <Font size="22.0" />
+                  <Font size="18.0" />
                </font>
             </Label>
             <Label text="My review" GridPane.columnIndex="1">
                <font>
-                  <Font size="22.0" />
+                  <Font size="18.0" />
                </font>
             </Label>
             <Label text="Comment" GridPane.columnIndex="2">
                <font>
-                  <Font size="22.0" />
+                  <Font size="18.0" />
                </font>
             </Label>
          </children>
       </GridPane>
-      <GridPane layoutX="65.0" layoutY="103.0" prefHeight="32.0" prefWidth="493.0">
+      <Button layoutX="380.0" layoutY="12.0" mnemonicParsing="false" onAction="#refresh" prefHeight="27.0" prefWidth="67.0" text="Refresh" />
+      <GridPane fx:id="gridPane" layoutX="54.0" layoutY="78.0" prefHeight="32.0" prefWidth="326.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
-         <children>
-            <Label text="Car Model">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <Label text="My review" GridPane.columnIndex="1" />
-            <Label text="Comment" GridPane.columnIndex="2" />
-         </children>
       </GridPane>
    </children>
 </AnchorPane>

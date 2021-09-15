@@ -6,6 +6,7 @@
 		<item key="isRegEx" value="false"/>
 		<item key="selection" value="printAc"/>
 		<list key="findhistory">
+			<item value="changeSta"/>
 			<item value="Id"/>
 			<item value="connecting"/>
 			<item value="todo"/>
@@ -13,7 +14,6 @@
 			<item value="rsRows"/>
 			<item value="close"/>
 			<item value="getDBAverages()"/>
-			<item value="connection"/>
 		</list>
 		<list key="replacehistory">
 			<item value="id"/>

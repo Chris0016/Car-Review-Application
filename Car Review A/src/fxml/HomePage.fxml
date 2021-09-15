@@ -3,35 +3,22 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.HomePageController">
    <children>
-      <Button layoutX="25.0" layoutY="200.0" mnemonicParsing="false" onAction="#setGridPane" text="Add Review" />
+      <Button layoutX="25.0" layoutY="200.0" mnemonicParsing="false" text="Add Review" />
       <Label layoutX="185.0" layoutY="14.0" text="This is Main Scene">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
       <Button layoutX="506.0" layoutY="351.0" mnemonicParsing="false" onAction="#signOut" text="Sign Out" />
-      <GridPane fx:id="gridPane" layoutX="208.0" layoutY="109.0" prefHeight="35.0" prefWidth="240.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-      </GridPane>
-      <Label layoutX="237.0" layoutY="84.0" prefHeight="25.0" prefWidth="63.0" text="Car Id" />
-      <Label layoutX="371.0" layoutY="88.0" text="Reviews" />
-      <Button layoutX="513.0" layoutY="84.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
-      <Button layoutX="25.0" layoutY="153.0" mnemonicParsing="false" text="My Reviews" />
+      <Button fx:id="myReviewsButton" layoutX="25.0" layoutY="167.0" mnemonicParsing="false" onAction="#myReviews" text="My Reviews" />
       <Label fx:id="statusLabel" layoutX="110.0" layoutY="368.0" prefHeight="17.0" prefWidth="303.0" text="Welcome" />
-      <Button layoutX="512.0" layoutY="132.0" mnemonicParsing="false" onAction="#printAcct" text="Print Acct" />
+      <Button layoutX="31.0" layoutY="238.0" mnemonicParsing="false" onAction="#printAcct" text="Print Acct" />
       <Label fx:id="hiMessage" layoutX="8.0" layoutY="88.0" prefHeight="17.0" prefWidth="79.0" text="Welcome" />
+      <AnchorPane fx:id="holderPane" layoutX="125.0" layoutY="53.0" prefHeight="294.0" prefWidth="455.0" />
+      <Button layoutX="40.0" layoutY="132.0" mnemonicParsing="false" onAction="#home" text="Home" />
    </children>
 </AnchorPane>
