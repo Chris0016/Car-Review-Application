@@ -34,7 +34,7 @@ public class HomePageController implements Initializable {
 	private Label hiMessage;
 	
 	@FXML
-	private Label myReviewsButton;
+	private Button myReviewsButton;
 	
 	@FXML 
 	private AnchorPane holderPane;
@@ -69,6 +69,7 @@ public class HomePageController implements Initializable {
 	public void myReviews() {
 		createPage("/fxml/USERREVIEWS.fxml");
 	}
+	
 	public void home() {
 		createPage("/fxml/HOME.fxml");
 	}
@@ -76,8 +77,6 @@ public class HomePageController implements Initializable {
 	public void printAcct() {
 		System.out.println(acct.toString());
 	}
-	
-
 	
 	public void signOut(ActionEvent event){
 		try{

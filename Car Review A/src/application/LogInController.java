@@ -159,8 +159,6 @@ public class LogInController implements Initializable{
 				//The query did not retrieve any row
 				System.out.println("username or password not found");
 				alertConfigs.invalidCredentials.showAndWait();
-			}else {
-				
 			}
 			
 			initializeAcct();

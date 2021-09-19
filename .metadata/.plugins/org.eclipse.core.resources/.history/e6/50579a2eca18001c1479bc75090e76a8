@@ -1,0 +1,21 @@
+package application;
+
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
+
+public class UserReviewsController extends HomePaneMaster {
+	
+	@FXML
+	private Button addReviews;
+	
+	public UserReviewsController() {
+		super("SELECT *  FROM carreview.car_rating_avg");
+	}
+	
+	@Override
+	public void refresh(ActionEvent event) {
+		super.calcRowSize();
+		
+		
+	}
+}
