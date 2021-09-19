@@ -22,19 +22,22 @@ public class HomePaneMaster implements Initializable {
 	private Statement stmt;
 	
 	private ResultSet rs;
-	private ResultSet rs2;
 	String sql;
 	
 	
 	
 	int rowSize;
-	//Row size is hard-coded because of funky situations that occur with getFetchSize();
-	// -> https://stackoverflow.com/questions/5689863/java-database-resultset-keep-returning-zero-rows
-	// -> https://stackoverflow.com/questions/20899977/what-and-when-should-i-specify-setfetchsize
+	int colSize; 
+	
 	/*
-	private int rsColumns;//Useful for  scaling purposes
-		The number of columns is hard-coded(2). 
-		The number of columns is  static unlike the number of rows. 
+		Useful for  scaling purposes:
+		
+		The number of columns is hard-coded(3). 
+		This super class is intended to be used for the Home and UserReviews controller
+		 , so I already know that the number of columns will not change. 
+		 
+		 To make this class scalable to multiple classes that have different number of 
+		 columns. Then simply create constructor to take in colSize number. 
 		
 		In the case that it becomes dynamic use rs.getColumnCount()
 		to initialize variable. place in 
@@ -43,76 +46,56 @@ public class HomePaneMaster implements Initializable {
 	private Node[][] gridPaneArray = null;
 	
 	private AlertConfigs alertConfigs;
-	private String table;
 	
+	// Cannot create a getter() because child class(UserReviewsControl) needs to manipulate the actual gridpane
 	@FXML
-	 GridPane gridPane; 
-	/*
-	   Cannot create a getter() because child class(UserReviewsControl) needs to manipulate the actual
-	 	gridpane
-	 */
-	
-	public  HomePaneMaster(String sql, String table) {
+	 protected GridPane gridPane; 
+
+	  
+	public  HomePaneMaster(String sql) {
 		this.sql = sql;
-		this.table = table;
-		rowSize = calcRowSize();
-		configure()
-		
+		this.colSize =3; 
 	}
 
-	
 	public HomePaneMaster() {
-		sql = "SELECT  *  FROM carreview.car_rating_avg";
-		configure();
+		this.sql = "";
 	}
 	
-	public void configure() {
-		handler = new DBHandler();
-		alertConfigs = new AlertConfigs();
-		
-		setGridPane();
-		initializeGridPaneArray();
-	}
-	
-	/*
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		
-		
 		handler = new DBHandler();
 		alertConfigs = new AlertConfigs();
-		
-		setGridPane();
+
+		setGridPane();		
 		initializeGridPaneArray();
 		
 	}
-	*/
 
 	
-    private void initializeGridPaneArray() {
+   private void initializeGridPaneArray() {
+		gridPaneArray = new Node[rowSize][colSize];
 		
-	//Number of columns is hard-coded.
-	gridPaneArray = new Node[rowSize][3];
-	
-	System.out.println("Rows: " + rowSize);
-	
-	ObservableList<Node> gridPaneNodes = this.gridPane.getChildren();
-	System.out.println("Gridpane nodes: "+ gridPaneNodes.toString());
-	
-       for(Node node : gridPaneNodes)
-       {
-          this.gridPaneArray[GridPane.getRowIndex(node)][GridPane.getColumnIndex(node)] = node;
-       }
-       
-       closeDB();
+		System.out.println("Rows: " + rowSize);
+		
+		ObservableList<Node> gridPaneNodes = this.gridPane.getChildren();
+		System.out.println("Gridpane nodes: "+ gridPaneNodes.toString());
+		
+	       for(Node node : gridPaneNodes)
+	       {
+	          this.gridPaneArray[GridPane.getRowIndex(node)][GridPane.getColumnIndex(node)] = node;
+	       }
+	       
+	       closeDB();
     }
 
-	public void setGridPane() {
+	protected void setGridPane() {
 		
-		if (setDBAverages() == false )	{
-			//Status label has already been changed in setDBAverages()
+		if (retrieveResultSet() == false )	{
 			return;
 		}
+		rowSize = calcRowSize();
+		
 			
 		try {
 			String carId, carAvg, comment;
@@ -130,8 +113,6 @@ public class HomePaneMaster implements Initializable {
 				gridPane.add(new Label(comment), 2, row);
 				
 				rs.next();
-				
-			
 			}
 			
 		} catch (SQLException e) {
@@ -141,15 +122,15 @@ public class HomePaneMaster implements Initializable {
 		}
 	} 
 		
-	public void refresh(ActionEvent event) {
-		setDBAverages();
+	protected void refresh(ActionEvent event) {
+		retrieveResultSet();
 		
 		try {
 			
 			rs.first();
 			Label node;
 			for(int row = 0; row < rowSize; row++ ) {	 
-				for (int col = 0; col < 3; col++) {
+				for (int col = 0; col < colSize; col++) {
 					node =(Label) gridPaneArray[row][col];
 					node.setText( rs.getString(col+1) );
 					
@@ -166,20 +147,14 @@ public class HomePaneMaster implements Initializable {
 		}	
 	}
 	
-	protected boolean setDBAverages() {
-		try {
-			
+	private boolean retrieveResultSet() {
+		try {	
 			connection = handler.getConnection();
-			System.out.println("Connecting to database...");
-			
+			System.out.println("Connecting to database...");	
 			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
-			 
-			String sql = "SELECT  *  FROM carreview.car_rating_avg";
 
 			rs  = stmt.executeQuery(sql);
-			
-			rs.next(); //Move to first row
-					
+       					
 			return true;
 			
 		}catch(Exception e) {			
@@ -197,23 +172,18 @@ public class HomePaneMaster implements Initializable {
 			stmt.close();
 			connection.close();
 		} catch (SQLException e) {
-			System.out.println("Error in closeDB():\n" + e);
-			
+			System.out.println("Error in closeDB():\n" + e);	
 		}
-		
 		System.out.println("Connection Closed...");
 	}
 	
+	
 	 int calcRowSize() {
-		
 		try {
-			connection = new Connection
-			rs2 = connection.createStatement().executeQuery("SELECT count(*) FROM" + table);
-			rs2.last();
-			return rs2.getRow();
-
+	           if (rs.last()) 
+	        	   return rs.getRow();
+	           
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			handleExceptions(e);
 		}

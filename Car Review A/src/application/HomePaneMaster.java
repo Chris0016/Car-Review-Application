@@ -122,7 +122,7 @@ public class HomePaneMaster implements Initializable {
 		}
 	} 
 		
-	protected void refresh(ActionEvent event) {
+	public void refresh(ActionEvent event) {
 		retrieveResultSet();
 		
 		try {

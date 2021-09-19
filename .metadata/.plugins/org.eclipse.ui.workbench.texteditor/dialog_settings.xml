@@ -4,28 +4,28 @@
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="rowSize"/>
+		<item key="selection" value="3"/>
 		<item key="wrap" value="false"/>
 		<item key="incremental" value="false"/>
 		<list key="findhistory">
+			<item value="3"/>
+			<item value="setDBAverages"/>
+			<item value="configure"/>
 			<item value="rowSize"/>
 			<item value="connection ="/>
 			<item value="acct"/>
 			<item value="resset"/>
 			<item value="carID"/>
-			<item value="Valu"/>
-			<item value="intValue()"/>
-			<item value="changeSta"/>
 		</list>
 		<list key="replacehistory">
+			<item value="colSize"/>
+			<item value="retrieveResultSet"/>
 			<item value="rs2"/>
 			<item value="id"/>
 			<item value="ROW_SIZE"/>
 			<item value="setDBAverages()"/>
 			<item value="stmt"/>
 			<item value="rsRows"/>
-			<item value="@FXML"/>
-			<item value="private"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">

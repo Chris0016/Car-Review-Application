@@ -16,18 +16,20 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
-public class HomePaneMaster implements Initializable {
+
+public class HomeController implements Initializable{
+	
+	
 	private Connection connection;
 	private DBHandler handler;
 	private Statement stmt;
-	
+	private String sql;
 	private ResultSet rs;
-	private ResultSet rs2;
-	String sql;
+	
+	private Account acct;
 	
 	
-	
-	int rowSize;
+	private final int ROW_SIZE = 3; 
 	//Row size is hard-coded because of funky situations that occur with getFetchSize();
 	// -> https://stackoverflow.com/questions/5689863/java-database-resultset-keep-returning-zero-rows
 	// -> https://stackoverflow.com/questions/20899977/what-and-when-should-i-specify-setfetchsize
@@ -43,58 +45,34 @@ public class HomePaneMaster implements Initializable {
 	private Node[][] gridPaneArray = null;
 	
 	private AlertConfigs alertConfigs;
-	private String table;
 	
 	@FXML
-	 GridPane gridPane; 
-	/*
-	   Cannot create a getter() because child class(UserReviewsControl) needs to manipulate the actual
-	 	gridpane
-	 */
-	
-	public  HomePaneMaster(String sql, String table) {
-		this.sql = sql;
-		this.table = table;
-		configure();
-		rowSize = calcRowSize();
-		
-		
-	}
-
-	
-	public HomePaneMaster() {
-		sql = "SELECT  *  FROM carreview.car_rating_avg";
-		configure();
-	}
-	
-	public void configure() {
-		handler = new DBHandler();
-		alertConfigs = new AlertConfigs();
-		
-		
-	}
-	
+	private GridPane gridPane;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		/*
+		//createPage();
+		
 		handler = new DBHandler();
 		alertConfigs = new AlertConfigs();
-		*/
 		
 		setGridPane();
 		initializeGridPaneArray();
 		
+		acct = LogInController.getInstance().getAccount();
+		
+		
 	}
-	
-
+	public void printAcct() {
+		System.out.println(acct.toString());
+	}
 	
     private void initializeGridPaneArray() {
 		
 	//Number of columns is hard-coded.
-	gridPaneArray = new Node[rowSize][3];
+	gridPaneArray = new Node[ROW_SIZE][3];
 	
-	System.out.println("Rows: " + rowSize);
+	System.out.println("Rows: " + ROW_SIZE);
 	
 	ObservableList<Node> gridPaneNodes = this.gridPane.getChildren();
 	System.out.println("Gridpane nodes: "+ gridPaneNodes.toString());
@@ -120,7 +98,7 @@ public class HomePaneMaster implements Initializable {
 			rs.first();
 			//rs.next();
 			
-			for(int row = 0; row < rowSize; row++) {
+			for(int row = 0; row < ROW_SIZE ; row++) {
 				carId = rs.getString(1);
 				carAvg = rs.getString(2);
 				comment = rs.getString(3);
@@ -148,7 +126,7 @@ public class HomePaneMaster implements Initializable {
 			
 			rs.first();
 			Label node;
-			for(int row = 0; row < rowSize; row++ ) {	 
+			for(int row = 0; row < ROW_SIZE  ; row++ ) {	 
 				for (int col = 0; col < 3; col++) {
 					node =(Label) gridPaneArray[row][col];
 					node.setText( rs.getString(col+1) );
@@ -166,15 +144,15 @@ public class HomePaneMaster implements Initializable {
 		}	
 	}
 	
-	protected boolean setDBAverages() {
+	private boolean setDBAverages() {
 		try {
 			
-			//connection = handler.getConnection();
+			connection = handler.getConnection();
 			System.out.println("Connecting to database...");
 			
 			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
 			 
-			String sql = "SELECT  *  FROM carreview.car_rating_avg";
+			sql = "SELECT  *  FROM carreview.car_rating_avg";
 
 			rs  = stmt.executeQuery(sql);
 			
@@ -191,7 +169,7 @@ public class HomePaneMaster implements Initializable {
 		return false;
 	}
 	
-	protected void closeDB()  {
+	private void closeDB()  {
 		try {
 			rs.close();
 			stmt.close();
@@ -202,23 +180,6 @@ public class HomePaneMaster implements Initializable {
 		}
 		
 		System.out.println("Connection Closed...");
-	}
-	
-	 int calcRowSize() {
-		
-		try {
-			connection = handler.getConnection();
-			rs2 = connection.createStatement().executeQuery("SELECT count(*) FROM " + table);
-			rs2.next();
-			System.out.println( rs2.getRow());
-			return rs2.getRow();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			handleExceptions(e);
-		}
-		return 0; 
 	}
 	
     private void handleExceptions(Exception e) {
@@ -259,4 +220,5 @@ public class HomePaneMaster implements Initializable {
 	}
 	*/
 	//-----------------------
+	
 }
