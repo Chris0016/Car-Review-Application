@@ -11,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -28,16 +27,11 @@ public class HomePageController implements Initializable {
 	private Button signOutButton;
 		
 	@FXML
-	private Label statusLabel;
-	
-	@FXML	
-	private Label hiMessage;
-	
-	@FXML
 	private Button myReviewsButton;
 	
 	@FXML 
 	private AnchorPane holderPane;
+	
 	
 	AnchorPane home;
 	
@@ -47,7 +41,7 @@ public class HomePageController implements Initializable {
 		home();
 		
 		acct = LogInController.getInstance().getAccount();
-		hiMessage.setText("Welcome " + acct.getName());
+		//hiMessage.setText("Welcome " + acct.getName());
 		
 	}
 	

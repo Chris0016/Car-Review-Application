@@ -14,6 +14,15 @@
 
 
 Stuff TODO in the future:
+	Error Handling in Adding the Car Reviews
+	
+	Deleting Reviews
+
+	Involve the use of car-name in the gridPanes. That either means add the car-name as a column or
+	replace the car-id column. 
+	
+	Sign Out functionality
+
 
 What it does:
 This application is meant to be a car review application where users can see a list of car reviews

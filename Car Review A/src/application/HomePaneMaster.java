@@ -50,6 +50,8 @@ public class HomePaneMaster implements Initializable {
 	// Cannot create a getter() because child class(UserReviewsControl) needs to manipulate the actual gridpane
 	@FXML
 	 protected GridPane gridPane; 
+	
+	
 
 	  
 	public  HomePaneMaster(String sql) {
@@ -71,7 +73,6 @@ public class HomePaneMaster implements Initializable {
 		initializeGridPaneArray();
 		
 	}
-
 	
    private void initializeGridPaneArray() {
 		gridPaneArray = new Node[rowSize][colSize];
@@ -148,22 +149,43 @@ public class HomePaneMaster implements Initializable {
 	}
 	
 	private boolean retrieveResultSet() {
+		System.out.println("SQL value: " + sql);
+		this.rs = runQuery(sql);
+		return rs != null;
+	}
+	
+	protected ResultSet runQuery(String sqlIn) {
 		try {	
 			connection = handler.getConnection();
 			System.out.println("Connecting to database...");	
 			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
 
-			rs  = stmt.executeQuery(sql);
-       					
-			return true;
-			
+			return stmt.executeQuery(sqlIn);
+       						
 		}catch(Exception e) {			
 			System.out.print(e);
 			e.printStackTrace();
 			handleExceptions(e);
 
 		}
-		return false;
+		return null;
+	}
+	//Returns < 0 means operation unsuccessful or no updates needed. 
+	protected int runQueryUpdate(String sqlIn) {
+		try {	
+			connection = handler.getConnection();
+			System.out.println("Connecting to database...");	
+			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
+
+			return  stmt.executeUpdate(sqlIn);
+       						
+		}catch(Exception e) {			
+			System.out.print(e);
+			e.printStackTrace();
+			handleExceptions(e);
+
+		}
+		return -1;
 	}
 	
 	protected void closeDB()  {

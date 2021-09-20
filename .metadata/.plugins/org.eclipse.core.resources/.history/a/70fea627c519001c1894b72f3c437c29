@@ -1,0 +1,31 @@
+#203447 background grey blue-ish
+
+#2196f3 Button blue
+
+#a0a2ab Grey
+
+#151928 Dark blue grey
+
+
+#cd2121 Underline Red
+
+
+
+
+
+Stuff TODO in the future:
+
+What it does:
+This application is meant to be a car review application where users can see a list of car reviews
+for a given set of cars. Further, users can add or delete their reviews to the system. The system
+will dynamically update when users hit refresh and will show the new average of car reviews per car. 
+
+How it works:
+
+There are several FXML files that are responsible for rendering the design of every scene. 
+The buttons and back-end, such as buttons and text change, is controlled by special classes that
+follow the format '<SomeName>Controller.java'. 
+
+The overall architecture goes as follows:
+	-> Use a draw.IO diagram
+

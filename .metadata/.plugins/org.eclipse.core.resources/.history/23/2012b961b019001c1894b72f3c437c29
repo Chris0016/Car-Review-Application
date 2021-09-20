@@ -1,0 +1,60 @@
+package application;
+
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+
+public class UserReviewsController extends HomePaneMaster {
+	
+	private static Account acct = LogInController.getInstance().getAccount();
+	String sql;
+	@FXML
+	private Button addReviewsButton;
+	
+	@FXML
+	private Button refreshButton;
+	
+	@FXML
+	private TextField commentAddField;
+	
+	@FXML
+	private TextField carRatingAddFIeld;
+	
+	@FXML
+	private TextField carIdAddFIeld;
+	
+	public UserReviewsController() {
+		super("SELECT car_id, review, comment  FROM carreview.car_user_reviews WHERE user_id =" + acct.getId()
+		);
+	}
+	
+	/*
+	 	The table for the user reviews is subject to be much more dynamic in comparison to
+		 the table for the car models(cars aren't going to be added/deleted as often). 
+		 Therefore, the refresh class needs to be reloaded from the ground up because is not just about
+		 changing the contents, but the number of contents. 
+	 */
+	
+	@Override
+	public void refresh(ActionEvent event) {
+		super.gridPane.getChildren().clear();
+		super.setGridPane();
+		System.out.println("Refreshing...");
+		super.closeDB();		
+	}
+	
+	public void addReview() {
+		
+		//this.sql = ''';
+		
+	}
+	
+	
+}
+ class Review() {
+	String carId;
+	int carReview; // < 5
+	String comment;
+	
+	
+}
