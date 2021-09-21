@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
     <fullyQualifiedTypeName name="javafx.scene.layout.AnchorPane"/>
-    <fullyQualifiedTypeName name="javafx.scene.control.TextField"/>
     <fullyQualifiedTypeName name="java.sql.DriverManager"/>
     <fullyQualifiedTypeName name="DBConnection.DBHandler"/>
     <fullyQualifiedTypeName name="java.sql.Connection"/>
@@ -22,6 +21,7 @@
     <fullyQualifiedTypeName name="java.lang.System"/>
     <fullyQualifiedTypeName name="application.LogInController"/>
     <fullyQualifiedTypeName name="javafx.fxml.Initializable"/>
-    <fullyQualifiedTypeName name="javafx.scene.control.Button"/>
     <fullyQualifiedTypeName name="sun.awt.image.IntegerComponentRaster"/>
+    <fullyQualifiedTypeName name="javafx.scene.control.TextField"/>
+    <fullyQualifiedTypeName name="javafx.scene.control.Button"/>
 </qualifiedTypeNameHistroy>

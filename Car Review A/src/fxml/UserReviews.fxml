@@ -37,7 +37,7 @@
       </GridPane>
       <Button fx:id="addReviewsButton" layoutX="419.0" layoutY="52.0" mnemonicParsing="false" onAction="#addReview" text="Add Review" />
       <Button fx:id="refreshButton" layoutX="419.0" layoutY="90.0" mnemonicParsing="false" onAction="#refresh" text="Refresh " />
-      <Button layoutX="407.0" layoutY="23.0" mnemonicParsing="false" text="Delete Review" />
+      <Button layoutX="407.0" layoutY="23.0" mnemonicParsing="false" onAction="#deleteReview" text="Delete Review" />
       <TextField fx:id="carIdDelField" layoutX="217.0" layoutY="23.0" promptText="car Id" />
       <TextField fx:id="commentAddField" layoutX="217.0" layoutY="52.0" promptText="comment" text="great" />
       <TextField fx:id="carRatingAddField" layoutX="139.0" layoutY="52.0" prefHeight="25.0" prefWidth="53.0" promptText="/5" text="4" />

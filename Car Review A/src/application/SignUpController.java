@@ -266,7 +266,7 @@ public class SignUpController implements Initializable{
 		try {
 			ageNum = Integer.parseInt(form.get("age"));
 			if(ageNum < 0 ) {
-				alertConfigs.notANumber.showAndWait();
+				alertConfigs.invalidAge.showAndWait();
 				return false;
 			}
 			else if(ageNum < 18 || ageNum > 110){
@@ -276,7 +276,7 @@ public class SignUpController implements Initializable{
 			}
 		}
 		catch(Exception e){
-			alertConfigs.notANumber.showAndWait();
+			alertConfigs.invalidAge.showAndWait();
 			System.out.println("Age input is not a number");
 			return false;
 		

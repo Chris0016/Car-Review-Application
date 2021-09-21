@@ -1,6 +1,10 @@
 package application;
 
 import javafx.fxml.FXML;
+
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -9,7 +13,10 @@ public class UserReviewsController extends HomePaneMaster {
 	
 	private static Account acct = LogInController.getInstance().getAccount();
 	private static String table = "carreview.car_user_reviews";
-	String sql;
+	private String sqlHolder;
+	
+	private int userId;
+	private String carId; //String for error throwing purposes
 	
 	@FXML
 	private Button addReviewsButton;
@@ -26,9 +33,13 @@ public class UserReviewsController extends HomePaneMaster {
 	@FXML
 	private TextField carIdAddField;
 	
+	@FXML
+	private TextField carIdDelField;
+	
 	public UserReviewsController() {
 		super("SELECT car_id, review, comment  FROM " + table + "  WHERE user_id =" + acct.getId()
 		);
+		userId = acct.getId();
 	}
 	
 	/*
@@ -47,31 +58,32 @@ public class UserReviewsController extends HomePaneMaster {
 	}
 	
 	public void addReview() {
-		
+		String holder = "";
 		try {
+			holder = this.carRatingAddField.getText().trim();
 			Review userReview = new Review(
-					this.carIdAddField.getText(),
-					Integer.valueOf(this.carRatingAddField.getText()),
-					this.commentAddField.getText()
+					Integer.valueOf(this.carIdAddField.getText().trim()),
+					Integer.valueOf(holder ), //May return a non integer
+					this.commentAddField.getText().trim()
 					);
 			
 			
-			this.sql = 
+			this.sqlHolder = 
 					"INSERT INTO "  
 					+ table 
 					+ " (`car_id`, `user_id`, `review`, `comment`)"
 					+ " VALUES (\' "+ userReview.getCarId()	+ " \',"
-								+ " \' " + acct.getId() +"\',"
+								+ " \' " +  userId +"\',"
 								+ " \' " + userReview.getCarReview() + "\',"
 								+ " \' " + userReview.getComment() + "\' "
 								+ ")";
 			
-			if (super.runQueryUpdate(sql) < 0)
+			if (super.runQueryUpdate(sqlHolder) < 0)
 				return;
 			this.refreshButton.fire();
 			
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
+			
 			/*
 			 TODO:
 			Review value is invalid:
@@ -88,35 +100,133 @@ public class UserReviewsController extends HomePaneMaster {
 				Input multiple review for the same car
 		 	
 			  */
-			 
-			e.printStackTrace();
+			
+			System.out.println(e);
+			String message = e.getMessage();
+			if (e instanceof IllegalStateException) {
+				
+				if (message.contentEquals("Review Must be in range of [0-5] Inclusive")) 
+					super.alertConfigs.carReviewOutOfRange.showAndWait();
+				
+				else if (message.contentEquals("Comment Cannot be longer than 200 Characters")) 
+					super.alertConfigs.carCommentInvalid.showAndWait();
+				
+				else if (message.contentEquals("Car Id must be greater than 0"))
+					super.alertConfigs.carIdLessThanZero.showAndWait();
+					
+			}
+			
+			else if (e instanceof NumberFormatException) 
+			{
+				if (isDecimal(holder))
+					super.alertConfigs.decimalCarId.showAndWait();
+				else
+					super.alertConfigs.notANumber.showAndWait();
+			}
+				
+			
+			
+			else if (e instanceof SQLIntegrityConstraintViolationException ) {
+				if (message.startsWith("Duplicate")) 
+					super.alertConfigs.duplicateReview.showAndWait();
+				else
+					super.alertConfigs.carIdNotFound.showAndWait();
+				
+			}
+				
+			
+			else {
+				
+				super.alertConfigs.unknownError.showAndWait();
+				e.printStackTrace();
+			}
+
 			return;
 		}
 			
 	}
+	private boolean isDecimal(String in) {
+		try {
+			Double.parseDouble(in);
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+	}
 	
-	
+	public void deleteReview() {
+		
+		this.carId = carIdDelField.getText(); // carId must be initialized dynamically. 
+		int holderCarId;
+		try {
+		 holderCarId = Integer.valueOf(carId) ;
+		
+		if (holderCarId < 0) {
+			super.alertConfigs.carIdLessThanZero.showAndWait();
+			return;
+		}
+				
+		this.sqlHolder = "DELETE FROM "
+				+ table
+				+ " WHERE (`user_id` =\' "+holderCarId + "\') "
+				+ "and (`car_id` =\' "+carId+ "\');";
+		
+		super.runQueryUpdate(sqlHolder);
+		this.refreshButton.fire();
+		
+		} catch(Exception e) {
+			if (e instanceof NumberFormatException)
+				super.alertConfigs.notANumber.showAndWait();
+			
+			else if (e instanceof SQLIntegrityConstraintViolationException)
+				super.alertConfigs.carIdNotFound.showAndWait();
+			
+			else {
+				super.alertConfigs.unknownError.showAndWait();
+				e.printStackTrace();
+				
+			}	
+		}			
+	}
 	
 }
  class Review{
-	String carId;
+	int carId;
 	int carReview;
 	String comment;
 	
-	public Review(String carId, int carReview, String comment) throws Exception {
+	public Review(int carId, int carReview, String comment) throws IllegalArgumentException {
 		
-		this.carReview = carReview;
-		this.carId = carId;
-		this.comment = comment;
+		this.carReview = validateCarReview(carReview);
+		this.carId = validateCarId(carId); //If id is not an int it will get handled in the addReview()
+		this.comment = validateComment(comment);
+	}
+	
+	private int validateCarReview(int in) throws IllegalStateException {
+		if (in < 0 || in > 5)
+			throw new IllegalStateException("Review Must be in range of [0-5] Inclusive");
+		return in;
+	}
+	
+	private String validateComment(String in) throws IllegalStateException {
+		if (in.length() > 200)
+				throw new IllegalStateException("Comment Cannot be longer than 200 Characters");
+		return in;
+	}
+	
+	private int validateCarId(int in) {
+		if (in < 0)
+			throw new IllegalStateException("Car Id must be greater than 0");
+		return in;
 	}
 	
 	
-	public String getCarId() {
+	public int getCarId() {
 		return carId;
 	}
 
 
-	public void setCarId(String carId) {
+	public void setCarId(int carId) {
 		this.carId = carId;
 	}
 
@@ -143,3 +253,4 @@ public class UserReviewsController extends HomePaneMaster {
 	
 	
 }
+ 
