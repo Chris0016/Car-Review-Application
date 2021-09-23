@@ -16,15 +16,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
-public class HomePaneMaster implements Initializable {
+public class HomePaneMaster   implements Initializable {
 	private Connection connection;
 	private DBHandler handler;
 	private Statement stmt;
 	
 	private ResultSet rs;
 	String sql;
-	
-	
 	
 	int rowSize;
 	int colSize; 
@@ -45,20 +43,21 @@ public class HomePaneMaster implements Initializable {
 	
 	private Node[][] gridPaneArray = null;
 	
-	public AlertConfigs alertConfigs;
+	protected AlertConfigs alertConfigs;
 	
 	// Cannot create a getter() because child class(UserReviewsControl) needs to manipulate the actual gridpane
 	@FXML
 	 protected GridPane gridPane; 
 	
-	  
 	public  HomePaneMaster(String sql) {
 		this.sql = sql;
 		this.colSize =3; 
+		
 	}
 
 	public HomePaneMaster() {
 		this.sql = "";
+		this.colSize =3; 
 	}
 	
 	@Override
@@ -69,7 +68,19 @@ public class HomePaneMaster implements Initializable {
 
 		setGridPane();		
 		initializeGridPaneArray();
-		
+			
+	}
+	
+	void setSQL(String in) {
+		this.sql = in;
+	}
+	
+	void run() {
+		handler = new DBHandler();
+		alertConfigs = new AlertConfigs();
+
+		setGridPane();		
+		initializeGridPaneArray();
 	}
 	
    private void initializeGridPaneArray() {
@@ -94,8 +105,7 @@ public class HomePaneMaster implements Initializable {
 			return;
 		}
 		rowSize = calcRowSize();
-		
-			
+				
 		try {
 			String carId, carAvg, comment;
 			//rsRows = rs.getFetchSize();
@@ -138,8 +148,7 @@ public class HomePaneMaster implements Initializable {
 				rs.next();
 			}
 			closeDB();
-			
-			
+				
 		} catch (SQLException e) {
 			handleExceptions(e);
 			e.printStackTrace();
@@ -160,7 +169,6 @@ public class HomePaneMaster implements Initializable {
 
 		}
 		return false;
-		
 	}
 	
 	protected ResultSet runQuery(String sqlIn) throws SQLException {
@@ -171,7 +179,6 @@ public class HomePaneMaster implements Initializable {
 
 			return stmt.executeQuery(sqlIn);
        						
-		
 	}
 	//Returns < 0 means operation unsuccessful or no updates needed. 
 	//Create Javadoc for this return statement. Needs to be interpreted. < 0 Mean Failure
@@ -221,13 +228,10 @@ public class HomePaneMaster implements Initializable {
 			
 			System.out.println("Error in handle exceptions: ");
 			 e.printStackTrace();
-			
 		}
 	}
 	
 	//For testing purposes only
-
-	
 	
 	//-----------------------
 	/*

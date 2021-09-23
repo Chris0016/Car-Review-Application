@@ -1,0 +1,250 @@
+package application;
+
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ResourceBundle;
+
+import DBConnection.DBHandler;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+
+public class HomePaneMaster implements Initializable {
+	private Connection connection;
+	private DBHandler handler;
+	private Statement stmt;
+	
+	private ResultSet rs;
+	String sql;
+	
+	
+	
+	int rowSize;
+	int colSize; 
+	
+	/*
+		Useful for  scaling purposes:
+		
+		The number of columns is hard-coded(3). 
+		This super class is intended to be used for the Home and UserReviews controller
+		 , so I already know that the number of columns will not change. 
+		 
+		 To make this class scalable to multiple classes that have different number of 
+		 columns. Then simply create constructor to take in colSize number. 
+		
+		In the case that it becomes dynamic use rs.getColumnCount()
+		to initialize variable. place in 
+	*/
+	
+	private Node[][] gridPaneArray = null;
+	
+	public AlertConfigs alertConfigs;
+	
+	// Cannot create a getter() because child class(UserReviewsControl) needs to manipulate the actual gridpane
+	@FXML
+	 protected GridPane gridPane; 
+	
+	  
+	public  HomePaneMaster(String sql) {
+		this.sql = sql;
+		this.colSize =3; 
+	}
+
+	public HomePaneMaster() {
+		this.sql = "";
+	}
+	
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		handler = new DBHandler();
+		alertConfigs = new AlertConfigs();
+
+		setGridPane();		
+		initializeGridPaneArray();
+		
+	}
+	
+   private void initializeGridPaneArray() {
+		gridPaneArray = new Node[rowSize][colSize];
+		
+		System.out.println("Rows: " + rowSize);
+		
+		ObservableList<Node> gridPaneNodes = this.gridPane.getChildren();
+		System.out.println("Gridpane nodes: "+ gridPaneNodes.toString());
+		
+	       for(Node node : gridPaneNodes)
+	       {
+	          this.gridPaneArray[GridPane.getRowIndex(node)][GridPane.getColumnIndex(node)] = node;
+	       }
+	       
+	       closeDB();
+    }
+
+	protected void setGridPane() {
+		
+		if (retrieveResultSet() == false )	{
+			return;
+		}
+		rowSize = calcRowSize();
+		
+			
+		try {
+			String carId, carAvg, comment;
+			//rsRows = rs.getFetchSize();
+			rs.first();
+			//rs.next();
+			
+			for(int row = 0; row < rowSize; row++) {
+				carId = rs.getString(1);
+				carAvg = rs.getString(2);
+				comment = rs.getString(3);
+				
+				gridPane.add(new Label(carId), 0, row); 
+				gridPane.add(new Label(carAvg), 1, row);
+				gridPane.add(new Label(comment), 2, row);
+				
+				rs.next();
+			}
+			
+		} catch (SQLException e) {
+			System.out.println(e);
+			this.handleExceptions(e);
+			return;
+		}
+	} 
+		
+	public void refresh(ActionEvent event) {
+		retrieveResultSet();
+		
+		try {
+			
+			rs.first();
+			Label node;
+			for(int row = 0; row < rowSize; row++ ) {	 
+				for (int col = 0; col < colSize; col++) {
+					node =(Label) gridPaneArray[row][col];
+					node.setText( rs.getString(col+1) );
+					
+				}
+				System.out.println();
+				rs.next();
+			}
+			closeDB();
+			
+			
+		} catch (SQLException e) {
+			handleExceptions(e);
+			e.printStackTrace();
+		}	
+	}
+	
+	private boolean retrieveResultSet() {
+		try {
+		System.out.println("SQL value: " + sql);
+		this.rs = runQuery(sql);
+		
+		return rs.next();
+		
+		} catch(Exception e) {			
+			System.out.print(e);
+			e.printStackTrace();
+			handleExceptions(e);
+
+		}
+		return false;
+		
+	}
+	
+	protected ResultSet runQuery(String sqlIn) throws SQLException {
+		
+			connection = handler.getConnection();
+			System.out.println("Connecting to database...");	
+			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
+
+			return stmt.executeQuery(sqlIn);
+       						
+		
+	}
+	//Returns < 0 means operation unsuccessful or no updates needed. 
+	//Create Javadoc for this return statement. Needs to be interpreted. < 0 Mean Failure
+	protected int runQueryUpdate(String sqlIn) throws SQLException {
+		
+			connection = handler.getConnection();
+			System.out.println("Connecting to database...");	
+			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
+
+			return  stmt.executeUpdate(sqlIn);
+       						
+	}
+	
+	protected void closeDB()  {
+		try {
+			rs.close();
+			stmt.close();
+			connection.close();
+		} catch (SQLException e) {
+			System.out.println("Error in closeDB():\n" + e);	
+		}
+		System.out.println("Connection Closed...");
+	}
+	
+	
+	 int calcRowSize() {
+		try {
+	           if (rs.last()) 
+	        	   return rs.getRow();
+	           
+		} catch (SQLException e) {
+			e.printStackTrace();
+			handleExceptions(e);
+		}
+		return 0; 
+	}
+	
+    private void handleExceptions(Exception e) {
+		if (e instanceof SQLException) {
+			alertConfigs.connectionError.showAndWait();
+			System.out.println("Error SQL Exception");
+			e.printStackTrace();
+
+		}
+		else {
+			alertConfigs.showUnknownError();
+			
+			System.out.println("Error in handle exceptions: ");
+			 e.printStackTrace();
+			
+		}
+	}
+	
+	//For testing purposes only
+
+	
+	
+	//-----------------------
+	/*
+		private void setDummyGridPane() {
+		int i = 0;
+		while(i < 5) {
+			gridPane.add(new Label(String.valueOf(i)), 0, i); 
+			gridPane.add(new Label("Hello"), 1, i);
+			i++;
+		}
+	}
+	private void printGridPaneArray() {
+		for (int i = 0; i < this.gridPaneArray.length; i++) {
+			for (int j = 0 ; j < 2; j++)
+				System.out.println(gridPaneArray[i][j].toString());
+		}
+	}
+	*/
+	//-----------------------
+}

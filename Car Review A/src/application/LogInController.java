@@ -38,7 +38,6 @@ public class LogInController implements Initializable{
 
  	private String username = "";
  	private String password = "";
- 	private boolean boolHolder;
  	
  	private AlertConfigs alertConfigs;
 
@@ -58,19 +57,7 @@ public class LogInController implements Initializable{
  	private PasswordField passwordTextField;
 
 
- 	 
- 
-	
-/*
-	public String getName(){
-		return form.get("name");
-	}
-
-	public ResultSet getCars(){
-		return userCarsData; 
-	}
-
-*/
+ 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1){
 		handler = new DBHandler();
@@ -153,12 +140,11 @@ public class LogInController implements Initializable{
 			
 			rs  = stmt.executeQuery(sql);
 			
-			boolHolder = rs.next();
-			
-			if(!boolHolder){
+			if(!rs.next()){
 				//The query did not retrieve any row
-				System.out.println("username or password not found");
+				System.out.println("Username-password  combination not found");
 				alertConfigs.invalidCredentials.showAndWait();
+				return false;
 			}
 			
 			initializeAcct();
@@ -167,8 +153,6 @@ public class LogInController implements Initializable{
    			stmt.close();
 			connection.close();
 			System.out.println("Connection Closed...");
-
-			return boolHolder;
 
 		}catch(Exception e){
 			if (e instanceof SQLException)
@@ -180,7 +164,7 @@ public class LogInController implements Initializable{
 			
 			System.out.println("Error in validating user name");
 		}
-		return false;
+		return true;
 	}
 	
 	private void initializeAcct() {

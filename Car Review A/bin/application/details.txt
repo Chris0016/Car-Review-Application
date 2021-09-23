@@ -20,7 +20,6 @@ Stuff TODO in the future:
 	Involve the use of car-name in the gridPanes. That either means add the car-name as a column or
 	replace the car-id column. 
 	
-	Sign Out functionality
 
 
 What it does:

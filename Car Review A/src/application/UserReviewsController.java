@@ -1,21 +1,19 @@
 package application;
 
 import javafx.fxml.FXML;
-
-import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 public class UserReviewsController extends HomePaneMaster {
 	
-	private static Account acct = LogInController.getInstance().getAccount();
+	private  Account acct = LogInController.getInstance().getAccount();
 	private static String table = "carreview.car_user_reviews";
 	private String sqlHolder;
 	
-	private int userId;
+	
+	private Integer userId = acct.getId();
 	private String carId; //String for error throwing purposes
 	
 	@FXML
@@ -36,11 +34,12 @@ public class UserReviewsController extends HomePaneMaster {
 	@FXML
 	private TextField carIdDelField;
 	
-	public UserReviewsController() {
-		super("SELECT car_id, review, comment  FROM " + table + "  WHERE user_id =" + acct.getId()
-		);
-		userId = acct.getId();
+	public UserReviewsController()  {
+		super();
+		super.setSQL("SELECT car_id, review, comment  FROM " + table + "  WHERE user_id =" + userId);
+		
 	}
+	
 	
 	/*
 	 	The table for the user reviews is subject to be much more dynamic in comparison to
@@ -58,12 +57,14 @@ public class UserReviewsController extends HomePaneMaster {
 	}
 	
 	public void addReview() {
-		String holder = "";
+		String carRevHolder = "";
+		String carIdHolder = "";
 		try {
-			holder = this.carRatingAddField.getText().trim();
+			carRevHolder = this.carRatingAddField.getText().trim();
+			carIdHolder = this.carIdAddField.getText().trim();
 			Review userReview = new Review(
-					Integer.valueOf(this.carIdAddField.getText().trim()),
-					Integer.valueOf(holder ), //May return a non integer
+					Integer.valueOf(carIdHolder),
+					Integer.valueOf(carRevHolder), //May return a non integer
 					this.commentAddField.getText().trim()
 					);
 			
@@ -94,7 +95,7 @@ public class UserReviewsController extends HomePaneMaster {
 				Not a number
 				Not found(sql)
 			
-			Comment section is greater than
+			Comment section is greater than 200 chars
 			
 			SQL errors	
 				Input multiple review for the same car
@@ -118,10 +119,11 @@ public class UserReviewsController extends HomePaneMaster {
 			
 			else if (e instanceof NumberFormatException) 
 			{
-				if (isDecimal(holder))
+				if ( (isDecimal(carIdHolder)))
 					super.alertConfigs.decimalCarId.showAndWait();
 				else
 					super.alertConfigs.notANumber.showAndWait();
+					
 			}
 				
 			
@@ -133,8 +135,7 @@ public class UserReviewsController extends HomePaneMaster {
 					super.alertConfigs.carIdNotFound.showAndWait();
 				
 			}
-				
-			
+					
 			else {
 				
 				super.alertConfigs.unknownError.showAndWait();
@@ -168,7 +169,7 @@ public class UserReviewsController extends HomePaneMaster {
 				
 		this.sqlHolder = "DELETE FROM "
 				+ table
-				+ " WHERE (`user_id` =\' "+holderCarId + "\') "
+				+ " WHERE (`user_id` =\' "+ userId + "\') "
 				+ "and (`car_id` =\' "+carId+ "\');";
 		
 		super.runQueryUpdate(sqlHolder);

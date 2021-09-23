@@ -20,9 +20,12 @@ public class HomePageController implements Initializable {
 	private Scene scene;
 	private Parent root;
 	
+	private AlertConfigs alertConfigs;
 	
-	private Account acct;
-		
+	private Account acct;	
+	
+	protected AnchorPane home;
+	
 	@FXML
 	private Button signOutButton;
 		
@@ -33,16 +36,16 @@ public class HomePageController implements Initializable {
 	private AnchorPane holderPane;
 	
 	
-	AnchorPane home;
-	
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		home();
 		
 		acct = LogInController.getInstance().getAccount();
-		//hiMessage.setText("Welcome " + acct.getName());
+		alertConfigs = new AlertConfigs();
 		
+		//hiMessage.setText("Welcome " + acct.getName());
+		System.out.println("Account ID in HOMEPAGE: " + acct.getId());
 	}
 	
 	public void setNode(Node node) {
@@ -55,7 +58,7 @@ public class HomePageController implements Initializable {
 			home = FXMLLoader.load(getClass().getResource(path));
 			setNode(home);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			alertConfigs.unknownError.showAndWait();
 			e.printStackTrace();
 		}
 	}
@@ -66,10 +69,6 @@ public class HomePageController implements Initializable {
 	
 	public void home() {
 		createPage("/fxml/HOME.fxml");
-	}
-	
-	public void printAcct() {
-		System.out.println(acct.toString());
 	}
 	
 	public void signOut(ActionEvent event){
@@ -85,4 +84,3 @@ public class HomePageController implements Initializable {
 	}
 	
 }
-

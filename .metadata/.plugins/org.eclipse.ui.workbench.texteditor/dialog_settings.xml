@@ -8,6 +8,7 @@
 		<item key="wrap" value="false"/>
 		<item key="incremental" value="false"/>
 		<list key="findhistory">
+			<item value="gridPane "/>
 			<item value="sql"/>
 			<item value="sql ="/>
 			<item value="3"/>
@@ -15,7 +16,6 @@
 			<item value="configure"/>
 			<item value="rowSize"/>
 			<item value="connection ="/>
-			<item value="acct"/>
 		</list>
 		<list key="replacehistory">
 			<item value="colSize"/>
