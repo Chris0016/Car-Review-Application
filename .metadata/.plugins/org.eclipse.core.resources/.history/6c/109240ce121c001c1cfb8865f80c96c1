@@ -51,7 +51,7 @@ public class HomePaneMaster   implements Initializable {
 	
 	public  HomePaneMaster(String sql) {
 		this.sql = sql;
-		this.colSize =2; 
+		this.colSize =4; 
 		
 	}
 
@@ -115,14 +115,11 @@ public class HomePaneMaster   implements Initializable {
 			for(int row = 0; row < rowSize; row++) {
 				carId = rs.getString(1);
 				carAvg = rs.getString(2);
-				if (colSize == 3) {
-					comment = rs.getString(3);
-					gridPane.add(new Label(comment), 2, row);
-				}
+				comment = rs.getString(3);
 				
 				gridPane.add(new Label(carId), 0, row); 
 				gridPane.add(new Label(carAvg), 1, row);
-				
+				gridPane.add(new Label(comment), 2, row);
 				
 				rs.next();
 			}

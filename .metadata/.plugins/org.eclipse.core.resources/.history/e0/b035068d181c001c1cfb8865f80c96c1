@@ -45,6 +45,8 @@ public class UserReviewsController extends HomePaneMaster {
 				
 				);
 		
+		//"SELECT  car_model, review, comment  FROM  table1" + "," + " table2 WHERE table1 " + " .user_id = " + userId + ";"
+		
 	}
 	
 	

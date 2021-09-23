@@ -41,9 +41,11 @@ public class UserReviewsController extends HomePaneMaster {
 				"SELECT  car_model, review, comment "
 				+ " FROM "+  table1  + "," +  table2 
 				+ " WHERE " +  table1 +  ".user_id = " + userId 
-				+ " And  "+table1+".car_id = "+table2+".car_id"
+				+ " And  car_temp.car_id = car_user_reviews.car_id"
 				
 				);
+		
+		//"SELECT  car_model, review, comment  FROM  table1" + "," + " table2 WHERE table1 " + " .user_id = " + userId + ";"
 		
 	}
 	

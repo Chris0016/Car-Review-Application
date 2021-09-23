@@ -38,12 +38,11 @@ public class UserReviewsController extends HomePaneMaster {
 	public UserReviewsController()  {
 		super();
 		super.setSQL(
-				"SELECT  car_model, review, comment "
-				+ " FROM "+  table1  + "," +  table2 
-				+ " WHERE " +  table1 +  ".user_id = " + userId 
-				+ " And  "+table1+".car_id = "+table2+".car_id"
+				"SELECT  car_model, review, comment  FROM "+  table1  + "," +  table2 +  " WHERE " +  table1 +  ".user_id = " + userId + ";"
 				
 				);
+		
+		//"SELECT  car_model, review, comment  FROM  table1" + "," + " table2 WHERE table1 " + " .user_id = " + userId + ";"
 		
 	}
 	

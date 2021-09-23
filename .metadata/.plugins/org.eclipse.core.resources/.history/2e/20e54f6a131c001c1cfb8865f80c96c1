@@ -11,7 +11,10 @@ package application;
 public class HomeController extends HomePaneMaster{
 	
 	public HomeController() {
-		super("SELECT car_model, `avg(review)` FROM  car_rating_avg");
+		super(
+				"SELECT car_temp.car_model, review, comment "
+				+ "FROM carreview.car_rating_avg, carreview.car_temp"
+				+ "WHERE car_temp.car_id= car_rating_avg.car_model");
 	}
 	
 	

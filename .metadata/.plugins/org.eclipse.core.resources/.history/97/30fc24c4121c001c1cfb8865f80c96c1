@@ -10,7 +10,7 @@ public class UserReviewsController extends HomePaneMaster {
 	
 	private  Account acct = LogInController.getInstance().getAccount();
 	private static String table1 = "carreview.car_user_reviews";
-	private static String table2 = "carreview.car_temp";
+	private static String table2 = "carreview.car_model";
 	private String sqlHolder;
 	
 	
@@ -38,11 +38,7 @@ public class UserReviewsController extends HomePaneMaster {
 	public UserReviewsController()  {
 		super();
 		super.setSQL(
-				"SELECT  car_model, review, comment "
-				+ " FROM "+  table1  + "," +  table2 
-				+ " WHERE " +  table1 +  ".user_id = " + userId 
-				+ " And  "+table1+".car_id = "+table2+".car_id"
-				
+				"SELECT car_id, car_model, review, comment  FROM " + table1 + ", " + table2 + "  WHERE user_id =" + userId
 				);
 		
 	}
