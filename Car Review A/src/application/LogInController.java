@@ -96,7 +96,7 @@ public class LogInController implements Initializable{
 				stage.show();
 			}catch(Exception e) {
 				e.printStackTrace();
-				System.out.println("Internal Error In SignUp");
+				System.out.println("Internal Error In Log In");
 			}
 
 		}

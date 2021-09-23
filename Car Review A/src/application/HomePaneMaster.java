@@ -49,25 +49,28 @@ public class HomePaneMaster   implements Initializable {
 	@FXML
 	 protected GridPane gridPane; 
 	
-	public  HomePaneMaster(String sql) {
+	@FXML
+	protected Label statusMessage;
+	
+	public  HomePaneMaster(String sql,int colSize) {
 		this.sql = sql;
-		this.colSize =2; 
+		this.colSize =colSize; 
 		
 	}
 
-	public HomePaneMaster() {
+	public HomePaneMaster(int colSize) {
 		this.sql = "";
-		this.colSize =3; 
+		this.colSize =colSize; 
 	}
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
 		handler = new DBHandler();
 		alertConfigs = new AlertConfigs();
 
 		setGridPane();		
 		initializeGridPaneArray();
+		 setStatusMessage("");
 			
 	}
 	
@@ -75,10 +78,14 @@ public class HomePaneMaster   implements Initializable {
 		this.sql = in;
 	}
 	
-	void run() {
+	/* Explain these two methods */
+	void start() {
 		handler = new DBHandler();
 		alertConfigs = new AlertConfigs();
 
+		run();
+	}
+	void run() {
 		setGridPane();		
 		initializeGridPaneArray();
 	}
@@ -99,34 +106,23 @@ public class HomePaneMaster   implements Initializable {
 	       closeDB();
     }
 
+   	
 	protected void setGridPane() {
-		
 		if (retrieveResultSet() == false )	{
 			return;
 		}
 		rowSize = calcRowSize();
-				
 		try {
-			String carId, carAvg, comment;
-			//rsRows = rs.getFetchSize();
+
 			rs.first();
-			//rs.next();
 			
 			for(int row = 0; row < rowSize; row++) {
-				carId = rs.getString(1);
-				carAvg = rs.getString(2);
-				if (colSize == 3) {
-					comment = rs.getString(3);
-					gridPane.add(new Label(comment), 2, row);
+				for(int col = 0; col < colSize; col++) {
+					gridPane.add(new Label(rs.getString(col+1)), col, row); 				
 				}
-				
-				gridPane.add(new Label(carId), 0, row); 
-				gridPane.add(new Label(carAvg), 1, row);
-				
-				
 				rs.next();
 			}
-			
+	
 		} catch (SQLException e) {
 			System.out.println(e);
 			this.handleExceptions(e);
@@ -135,8 +131,8 @@ public class HomePaneMaster   implements Initializable {
 	} 
 		
 	public void refresh(ActionEvent event) {
-		retrieveResultSet();
-		
+		 setStatusMessage("");
+		retrieveResultSet();	
 		try {
 			
 			rs.first();
@@ -151,10 +147,12 @@ public class HomePaneMaster   implements Initializable {
 				rs.next();
 			}
 			closeDB();
+			 setStatusMessage("Refresh Successfull");
 				
 		} catch (SQLException e) {
 			handleExceptions(e);
 			e.printStackTrace();
+			 setStatusMessage("Error Refreshing");
 		}	
 	}
 	
@@ -169,29 +167,27 @@ public class HomePaneMaster   implements Initializable {
 			System.out.print(e);
 			e.printStackTrace();
 			handleExceptions(e);
+			 setStatusMessage("Error Retrieving Data");
 
 		}
 		return false;
 	}
 	
 	protected ResultSet runQuery(String sqlIn) throws SQLException {
-		
-			connection = handler.getConnection();
-			System.out.println("Connecting to database...");	
-			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
+		connection = handler.getConnection();
+		System.out.println("Connecting to database...");	
+		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
 
-			return stmt.executeQuery(sqlIn);
+		return stmt.executeQuery(sqlIn);
        						
 	}
-	//Returns < 0 means operation unsuccessful or no updates needed. 
-	//Create Javadoc for this return statement. Needs to be interpreted. < 0 Mean Failure
-	protected int runQueryUpdate(String sqlIn) throws SQLException {
-		
-			connection = handler.getConnection();
-			System.out.println("Connecting to database...");	
-			stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
+	//Returns false (< 0 ) means operation unsuccessful or no updates needed. 
+	protected boolean runQueryUpdate(String sqlIn) throws SQLException {
+		connection = handler.getConnection();
+		System.out.println("Connecting to database...");	
+		stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,  ResultSet.CONCUR_READ_ONLY);
 
-			return  stmt.executeUpdate(sqlIn);
+		return  stmt.executeUpdate(sqlIn) > -1;
        						
 	}
 	
@@ -219,6 +215,13 @@ public class HomePaneMaster   implements Initializable {
 		return 0; 
 	}
 	
+	 protected void setColSize(int colSize) {
+		 this.colSize = colSize;
+	 }
+	 
+	 protected void setStatusMessage(String in) {
+		 this.statusMessage.setText(in);
+	 }
     private void handleExceptions(Exception e) {
 		if (e instanceof SQLException) {
 			alertConfigs.connectionError.showAndWait();
@@ -228,7 +231,6 @@ public class HomePaneMaster   implements Initializable {
 		}
 		else {
 			alertConfigs.showUnknownError();
-			
 			System.out.println("Error in handle exceptions: ");
 			 e.printStackTrace();
 		}

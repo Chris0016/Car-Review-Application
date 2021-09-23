@@ -39,12 +39,9 @@ public class HomePageController implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		home();
-		
 		acct = LogInController.getInstance().getAccount();
 		alertConfigs = new AlertConfigs();
-		
-		//hiMessage.setText("Welcome " + acct.getName());
+		home();
 		System.out.println("Account ID in HOMEPAGE: " + acct.getId());
 	}
 	
@@ -84,3 +81,18 @@ public class HomePageController implements Initializable {
 	}
 	
 }
+
+/*
+ 	Why:
+ 	
+ 		There is another scene within the main Home scene. The sub-scene is the center display and gets controlled by this class. 
+ 		From this class you can switch between ''Home" and "My Reviews" (forward and back) sections of the program. 
+ 		
+ 		Doing it this way simplifies the program and also reduces its size. A different implementation would be to have each section("Home" and "My Reviews") be their own
+ 		main scene and not a sub-scene. This would mean that each of them would need to have their own buttons to switch and refresh.  In essence, a lot of code would be
+ 		repeated; Not good design. 
+ 		
+ 		The method implemented had this class act as a "Frame" that controls the switching between sub-scenes.
+ 		
+ 
+ */ 

@@ -27,7 +27,7 @@ public class SignUpController implements Initializable{
 	private Parent root;
 	private Stage stage;
 	private Scene scene;
-	//private ActionEvent loginEventCopy;
+	
 
 	private Connection connection;
 	private DBHandler handler;
@@ -38,13 +38,11 @@ public class SignUpController implements Initializable{
 
 	private AlertConfigs alertConfigs;
 
-	//private String name;
 	
 	private Hashtable<String, String> form;
 	private int ageNum;
 	private String holder;
-	private boolean boolHolder;
-
+	
 	@FXML
 	 private TextField nameTextField;
 
@@ -72,6 +70,7 @@ public class SignUpController implements Initializable{
 	@FXML
 	private Button signUpButton;
 
+	
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -91,7 +90,7 @@ public class SignUpController implements Initializable{
 		form.put("password1", password1TextField.getText());
 		form.put("password2", password2TextField.getText());
 	}
-
+	
 	public void returnToLogin(ActionEvent event){
 		try{
 			root = FXMLLoader.load(getClass().getResource("/fxml/LogIn.fxml"));
@@ -107,22 +106,23 @@ public class SignUpController implements Initializable{
 	public void signUp(){
 		
 		loadVariables();
-		printValues();
-		if (isEmpty()){
+		//System.out.println(form);
+		if (emptyFieldsExist()){
 			alertConfigs.incompleteForm.showAndWait();
 			return;
 		}
 		
 		//Check for valid credentials if true then try to save data: when both success then go back to login
-		if (validCredentials() && saveData()) {
+		if (validCredentials() && saveDataToServer()) {
 			alertConfigs.accountCreated.showAndWait();
 			returnToLogInButton.fire();
 			System.out.println("Success Creating User");	
 		}
 	}
 	
-	private boolean saveData() {
-		//Save Data
+	//	 Returns true if the data was saved to the server successfully and false otherwise.
+	private boolean saveDataToServer() {
+		
 		System.out.println("Connecting to database...");
 		try {
 		sql = "INSERT INTO accounts(name, lastname, age, favoritecar, username, password)"
@@ -175,27 +175,23 @@ public class SignUpController implements Initializable{
 			
 			stmt = connection.createStatement();
 
-			//TODO: search query for the given username 
 			sql = "SELECT username " +
             "FROM accounts "+
             "WHERE username =\'"+ form.get("username") + "\'";
 
 			rs  = stmt.executeQuery(sql);
 
-			//Query retrieves empty or a username
-			boolHolder =rs.next();
-
-			if(boolHolder) {
+			if(rs.next()) {
+				//Query retrieves a username meaning it already exists. 
 				alertConfigs.usernameTaken.showAndWait();
 				System.out.println("Username Taken");
+				return false;
 			}
 				
 			rs.close();
    			stmt.close();
 			connection.close();
 			System.out.println("Connection Closed...");
-
-			return !(boolHolder);
 
 		}catch(Exception e){
 			if (e instanceof SQLException)
@@ -206,22 +202,9 @@ public class SignUpController implements Initializable{
 			
 			System.out.println("Error in validating user name");
 		}
-		return false;
-	}
-	
-	/*
-	private boolean uniqueUsername(ResultSet rs, String usernameInput) throws SQLException {
-		while(rs.next()){
-				if (usernameInput.equals(rs.getString("username"))){
-					System.out.println("Username already in use");
-					alertConfigs.usernameTaken.showAndWait();
-					return false;
-				} 
-			}
 		return true;
 	}
-	*/
-
+	
 	private boolean hasValidPassword() {
 		return (passwordMatches() && strongPassword());
 	}
@@ -284,12 +267,7 @@ public class SignUpController implements Initializable{
 		return true;
 	}
 
-
-	private void printValues(){
-		System.out.println(form);
-	}
-
-	private boolean isEmpty() {
+	private boolean emptyFieldsExist() {
 		try{
 			for(Entry<String, String> e :  form.entrySet())
 				if (e.getValue().equals("")) return true;
@@ -299,5 +277,8 @@ public class SignUpController implements Initializable{
 		return false;
 	}
 	
+	
 
 }
+
+

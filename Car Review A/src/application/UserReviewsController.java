@@ -36,9 +36,9 @@ public class UserReviewsController extends HomePaneMaster {
 	private TextField carIdDelField;
 	
 	public UserReviewsController()  {
-		super();
+		super(4);
 		super.setSQL(
-				"SELECT  car_model, review, comment "
+				"SELECT "  + table1 + ".car_id, car_model, review, comment "
 				+ " FROM "+  table1  + "," +  table2 
 				+ " WHERE " +  table1 +  ".user_id = " + userId 
 				+ " And  "+table1+".car_id = "+table2+".car_id"
@@ -57,13 +57,16 @@ public class UserReviewsController extends HomePaneMaster {
 	
 	@Override
 	public void refresh(ActionEvent event) {
+		super.setStatusMessage("");
 		super.gridPane.getChildren().clear();
 		super.setGridPane();
 		System.out.println("Refreshing...");
-		super.closeDB();		
+		super.closeDB();	
+		super.setStatusMessage("Success Refreshing");
 	}
 	
 	public void addReview() {
+		super.setStatusMessage("");
 		String carRevHolder = "";
 		String carIdHolder = "";
 		try {
@@ -86,29 +89,16 @@ public class UserReviewsController extends HomePaneMaster {
 								+ " \' " + userReview.getComment() + "\' "
 								+ ")";
 			
-			if (super.runQueryUpdate(sqlHolder) < 0)
-				return;
-			this.refreshButton.fire();
+			//If update is successful
+			if (super.runQueryUpdate(sqlHolder)) {
+				this.refreshButton.fire();
+				super.setStatusMessage("Review Added Successfully ");
+			} 
+			
+			return;
 			
 		} catch(Exception e) {
-			
-			/*
-			 TODO:
-			Review value is invalid:
-				Not a number
-				0 > x > 5
-			
-			CardId is invalid
-				Not a number
-				Not found(sql)
-			
-			Comment section is greater than 200 chars
-			
-			SQL errors	
-				Input multiple review for the same car
-		 	
-			  */
-			
+			super.setStatusMessage("Errror Adding Review");
 			System.out.println(e);
 			String message = e.getMessage();
 			if (e instanceof IllegalStateException) {
@@ -131,9 +121,7 @@ public class UserReviewsController extends HomePaneMaster {
 				else
 					super.alertConfigs.notANumber.showAndWait();
 					
-			}
-				
-			
+			}		
 			
 			else if (e instanceof SQLIntegrityConstraintViolationException ) {
 				if (message.startsWith("Duplicate")) 
@@ -141,14 +129,12 @@ public class UserReviewsController extends HomePaneMaster {
 				else
 					super.alertConfigs.carIdNotFound.showAndWait();
 				
-			}
-					
-			else {
-				
+			}				
+			else {			
 				super.alertConfigs.unknownError.showAndWait();
 				e.printStackTrace();
 			}
-
+			
 			return;
 		}
 			
@@ -198,6 +184,7 @@ public class UserReviewsController extends HomePaneMaster {
 	}
 	
 }
+
  class Review{
 	int carId;
 	int carReview;
@@ -228,37 +215,18 @@ public class UserReviewsController extends HomePaneMaster {
 		return in;
 	}
 	
-	
 	public int getCarId() {
 		return carId;
 	}
 
-
-	public void setCarId(int carId) {
-		this.carId = carId;
-	}
-
-
 	public int getCarReview() {
 		return carReview;
 	}
-
-
-	public void setCarReview(int carReview) {
-		this.carReview = carReview;
-	}
-
 
 	public String getComment() {
 		return comment;
 	}
 
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	
-	
 }
  

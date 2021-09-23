@@ -52,3 +52,13 @@ public class Account {
 	}
 	
 }
+/* 
+ 	Why:
+ 		All of the information retrieved from the resultset on log-in is related to each other and belongs together. 
+ 		Represents user data as one type instead of discrete variables. 
+ 		
+ 		Used by the "My reviews section" to retrieve table of user reviews.
+ 		
+ 		Read Details.txt for more information.
+ 		
+ 		 */
