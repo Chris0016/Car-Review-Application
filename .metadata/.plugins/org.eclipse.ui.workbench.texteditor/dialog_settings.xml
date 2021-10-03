@@ -8,6 +8,7 @@
 		<item key="wrap" value="false"/>
 		<item key="incremental" value="false"/>
 		<list key="findhistory">
+			<item value="todo"/>
 			<item value="Internal"/>
 			<item value="alert"/>
 			<item value="setGri"/>
@@ -15,7 +16,6 @@
 			<item value="run"/>
 			<item value="print"/>
 			<item value="isEm"/>
-			<item value="form"/>
 		</list>
 		<list key="replacehistory">
 			<item value="colSize"/>

@@ -60,7 +60,7 @@ public class AlertConfigs {
 			makeAlert("Invalid Review", "Car Review Value Must Be A Whole Number", "Decimal values are not accepted, please enter a whole number between 0 and 5. ", AlertType.WARNING);
 	
 	final Alert carIdNotFound = 
-			makeAlert("Invalid Car Id", "Car Id Submitted Was Not Found", "The car Id you have chosen cannot be found, please try again with a different car Id.", AlertType.WARNING);
+			makeAlert("Invalid Car Id", "Car Id submitted Was Not Found", "The car Id you have chosen cannot be found, please try again with a different car Id.", AlertType.WARNING);
 			
 	final Alert carIdLessThanZero = 
 			makeAlert("Invalid Car Id", "Car Id Must Be Greater Than Zero", "Please input a value greater than zero for the car Id.", AlertType.WARNING);

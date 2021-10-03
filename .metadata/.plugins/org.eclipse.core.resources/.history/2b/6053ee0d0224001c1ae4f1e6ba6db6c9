@@ -143,15 +143,14 @@ public class SignUpController implements Initializable{
 
 		connection.close();
 		pst.close();
-		System.out.println("Closing database...");	
-		
+		System.out.println("Closing database...");				
 		}catch(Exception e) {
-			System.out.print(e);
+ 
 			if (e instanceof SQLException)
 				alertConfigs.connectionError.showAndWait(); 
 			else
 				alertConfigs.unknownError.showAndWait();
-			
+
 			e.printStackTrace();
 			return false;
 		}

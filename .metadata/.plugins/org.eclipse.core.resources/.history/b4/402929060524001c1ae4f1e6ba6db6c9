@@ -125,7 +125,7 @@ public class SignUpController implements Initializable{
 		
 		System.out.println("Connecting to database...");
 		try {
-		sql = "INSERT INTO accounts(name, lastname, age, favoritecar, username, password)"
+		sql = "INSERT INTO account2(name, lastname, age, favoritecar, username, password)"
 						+ "values(?, ?, ? , ?, ?, ?)";
 		connection = handler.getConnection();
 		System.out.println("Connected to database");
