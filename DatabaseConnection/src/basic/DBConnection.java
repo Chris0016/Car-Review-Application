@@ -9,7 +9,7 @@ public class DBConnection {
 
 	public static void main(String args[]) throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/carreviewaccounts", "root", "361.77Mlqs@@" );
+		Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/carreviewaccounts", "root", "Can't Show Password" );
 		
 		System.out.println("Connected to Database");
 	}
